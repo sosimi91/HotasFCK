@@ -88,7 +88,7 @@ class Joy2Train:
 
             prev_break_value, prev_break_zone = self._axis_zonal_to_keypress(prev_break_value,
                                                                              prev_break_zone,
-                                                                             "JOY_Y", "á", "é")
+                                                                             "JOY_Y", ";", "'")
 
             self._axis_endpoint_to_keypress("JOY_U", "y", "u")
 
