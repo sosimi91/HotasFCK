@@ -5,6 +5,8 @@ A small tool in python to map joystick inputs to keyboard presses for the game.
 
 Use it freely, but don't make money out of it.
 
+Demo: https://www.youtube.com/watch?v=VoueXBKUCk8
+
 ### Backstory
 So: I love this game, but playing on a keyboard is a bit boring after a while,
 playing on a gamepad is a bit limited. I could use the RailDriver controller,
