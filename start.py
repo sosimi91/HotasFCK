@@ -63,6 +63,9 @@ class Joy2Train:
     def main(self):
         prev_throttle_value = 0
         prev_throttle_zone = 0
+
+        prev_break_value = 0
+        prev_break_zone = 0
         while True:
             joystick_data = self.api.poll_joystick(self.joystick)
             axes = joystick_data["axes"]
@@ -72,6 +75,10 @@ class Joy2Train:
             prev_throttle_value, prev_throttle_zone = self._axis_to_keypress(prev_throttle_value,
                                                                              prev_throttle_zone,
                                                                              "JOY_Z", "a", "d")
+
+            prev_break_value, prev_break_zone = self._axis_to_keypress(prev_break_value,
+                                                                       prev_break_zone,
+                                                                       "JOY_Y", "á", "é")
 
 
 if __name__ == "__main__":
