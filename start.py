@@ -42,10 +42,10 @@ class Joy2Train:
         sleep(0.3)
         pyautogui.keyUp(key)
 
-    def _axis_to_keypress(self, previous_value, previous_zone, axis_name, on_increase, on_decrease):
-        throttle = self.joystick.get_axis(axis_name)
-        if throttle.changed:
-            current_value = throttle.value
+    def _axis_zonal_to_keypress(self, previous_value, previous_zone, axis_name, on_increase, on_decrease):
+        axis = self.joystick.get_axis(axis_name)
+        if axis.changed:
+            current_value = axis.value
             current_zone = self.zone(current_value)
             if (previous_value < current_value) and (previous_zone < current_zone):
                 print("---{}---".format(axis_name))
@@ -72,13 +72,13 @@ class Joy2Train:
             buttons = joystick_data["buttons"]
             pov = joystick_data["pov"]
 
-            prev_throttle_value, prev_throttle_zone = self._axis_to_keypress(prev_throttle_value,
-                                                                             prev_throttle_zone,
-                                                                             "JOY_Z", "a", "d")
+            prev_throttle_value, prev_throttle_zone = self._axis_zonal_to_keypress(prev_throttle_value,
+                                                                                   prev_throttle_zone,
+                                                                                   "JOY_Z", "a", "d")
 
-            prev_break_value, prev_break_zone = self._axis_to_keypress(prev_break_value,
-                                                                       prev_break_zone,
-                                                                       "JOY_Y", "á", "é")
+            prev_break_value, prev_break_zone = self._axis_zonal_to_keypress(prev_break_value,
+                                                                             prev_break_zone,
+                                                                             "JOY_Y", "á", "é")
 
 
 if __name__ == "__main__":
