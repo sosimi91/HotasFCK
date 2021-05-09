@@ -1,11 +1,24 @@
 import pyautogui
-from joystick_api.joystickapi import JoystickAPI
+
+from argparse import ArgumentParser
+from os.path import join
 from time import sleep
+
+from config.config_manager import Config
+from joystick_api.joystickapi import JoystickAPI
 
 
 class Joy2Train:
-    def __init__(self):
-        self.api = JoystickAPI()
+    DEFAULT_CONFIG_FILE = join("config", "config.json")
+    DEFAULT_NEUTRAL_VAL = 32767
+
+    def __init__(self, conf_file=None):
+        if cfg_file is None:
+            self.config = Config(self.DEFAULT_CONFIG_FILE)
+        else:
+            self.config = Config(conf_file)
+
+        self.api = JoystickAPI(joystick_oem_name=self.config.get_joystick_name())
         self.joystick = self.api.get_joystick()
 
     @staticmethod
@@ -94,5 +107,12 @@ class Joy2Train:
 
 
 if __name__ == "__main__":
-    J2T = Joy2Train()
+    ap = ArgumentParser()
+    ap.add_argument("--config", required=False, help="Config file path and name.")
+    args = ap.parse_args()
+    if args.config:
+        cfg_file = args.config
+    else:
+        cfg_file = None
+    J2T = Joy2Train(conf_file=cfg_file)
     J2T.main()

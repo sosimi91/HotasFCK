@@ -1,0 +1,118 @@
+{
+  "trains":{
+    "1972 Stock": {
+      "zones":{
+        "accelerator": {
+          "zone_01": {
+            "name": "Parallel",
+            "id": -3,
+            "min": 0,
+            "max": 10921
+          },
+          "zone_02": {
+            "name": "Shunt",
+            "id": -2,
+            "min": 10921,
+            "max": 21842
+          },
+          "zone_03": {
+            "name": "Series",
+            "id": -1,
+            "min": 21842,
+            "max": 32765
+          },
+          "zone_04": {
+            "name": "Off and Release",
+            "id": 0,
+            "min": 32765,
+            "max": 32770
+          },
+          "zone_05": {
+            "name": "Rheo 1 Hold",
+            "id": 1,
+            "min": 32770,
+            "max": 36500
+          },
+          "zone_06": {
+            "name": "Rheo 2 EP Min",
+            "id": 2,
+            "min": 36500,
+            "max": 41000
+          },
+          "zone_07": {
+            "name": "Rheo 2 EP Normal",
+            "id": 3,
+            "min": 41000,
+            "max": 45500
+          },
+          "zone_08": {
+            "name": "Rheo 2 EP Max",
+            "id": 4,
+            "min": 45500,
+            "max": 50000
+          },
+          "zone_09": {
+            "name": "Lap",
+            "id": 5,
+            "min": 50000,
+            "max": 54500
+          },
+          "zone_10": {
+            "name": "Service Application",
+            "id": 6,
+            "min": 54500,
+            "max": 59000
+          },
+          "zone_11": {
+            "name": "Emergency",
+            "id": 7,
+            "min": 59000,
+            "max": 65530
+          },
+          "zone_12": {
+            "name": "Shutdown",
+            "id": 8,
+            "min": 65530,
+            "max": 66000
+          }
+        }
+      }
+    }
+  },
+  "selected_train": "1972 Stock",
+  "joystick": {
+    "name": "T.Flight Hotas X",
+    "mapping": {
+      "accelerator": {
+        "axis": "JOY_Z",
+        "type": "zonal",
+        "on_increase": "a",
+        "on_decrease": "d"
+      },
+      "auto_brake": {
+        "axis": "JOY_Y",
+        "type": "zonal",
+        "on_increase": ";",
+        "on_decrease": "'"
+      },
+      "direction": {
+        "axis": "JOY_R",
+        "type": "endpoint",
+        "on_low": "s",
+        "on_high": "w"
+      },
+      "doors": {
+        "axis": "JOY_U",
+        "type": "endpoint",
+        "on_low": "y",
+        "on_high": "u",
+        "neutral": 32767
+      },
+      "pause": {
+        "type": "button",
+        "joy_button": "BTN_12",
+        "kbd_button": "esc"
+      }
+    }
+  }
+}
