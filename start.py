@@ -60,6 +60,16 @@ class Joy2Train:
             previous_zone = current_zone
         return previous_value, previous_zone
 
+    def _axis_endpoint_to_keypress(self, axis_name, on_low, on_high, neutral_value=32767):
+        axis = self.joystick.get_axis(axis_name)
+        if axis.changed:
+            if axis.value < neutral_value:
+                print("---{}---".format(axis_name))
+                self.press_key(on_low)
+            elif axis.value > neutral_value:
+                print("+++{}+++".format(axis_name))
+                self.press_key(on_high)
+
     def main(self):
         prev_throttle_value = 0
         prev_throttle_zone = 0
@@ -79,6 +89,8 @@ class Joy2Train:
             prev_break_value, prev_break_zone = self._axis_zonal_to_keypress(prev_break_value,
                                                                              prev_break_zone,
                                                                              "JOY_Y", "á", "é")
+
+            self._axis_endpoint_to_keypress("JOY_U", "y", "u")
 
 
 if __name__ == "__main__":
