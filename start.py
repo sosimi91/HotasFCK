@@ -42,6 +42,24 @@ class Joy2Train:
         sleep(0.3)
         pyautogui.keyUp(key)
 
+    def _axis_to_keypress(self, previous_value, previous_zone, axis_name, on_increase, on_decrease):
+        throttle = self.joystick.get_axis(axis_name)
+        if throttle.changed:
+            current_value = throttle.value
+            current_zone = self.zone(current_value)
+            if (previous_value < current_value) and (previous_zone < current_zone):
+                print("---{}---".format(axis_name))
+                for press in range(0, (current_zone - previous_zone)):
+                    self.press_key(on_decrease)
+            elif (previous_value > current_value) and (previous_zone > current_zone):
+                print("+++{}+++".format(axis_name))
+                for press in range(0, (previous_zone - current_zone)):
+                    self.press_key(on_increase)
+
+            previous_value = current_value
+            previous_zone = current_zone
+        return previous_value, previous_zone
+
     def main(self):
         prev_throttle_value = 0
         prev_throttle_zone = 0
@@ -51,19 +69,9 @@ class Joy2Train:
             buttons = joystick_data["buttons"]
             pov = joystick_data["pov"]
 
-            throttle = self.joystick.get_axis("JOY_Z")
-            if throttle.changed:
-                current_value = throttle.value
-                current_zone = self.zone(current_value)
-                if (prev_throttle_value < current_value) and (prev_throttle_zone < current_zone):
-                    print("---")
-                    self.press_key("d")
-                elif (prev_throttle_value > current_value) and (prev_throttle_zone > current_zone):
-                    print("+++")
-                    self.press_key("a")
-
-                prev_throttle_value = current_value
-                prev_throttle_zone = current_zone
+            prev_throttle_value, prev_throttle_zone = self._axis_to_keypress(prev_throttle_value,
+                                                                             prev_throttle_zone,
+                                                                             "JOY_Z", "a", "d")
 
 
 if __name__ == "__main__":
