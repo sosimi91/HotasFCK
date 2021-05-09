@@ -150,7 +150,11 @@ class JoystickAPI:
     JS_NOT_FOUND_ERROR_STR = "{} joystick not found"
     JS_DATA_STR = "Axes: {}; Buttons: {}; POV: {}"
 
-    def __init__(self):
+    def __init__(self, joystick_oem_name=None):
+        if joystick_oem_name is None:
+            self.oem_name_of_searched_joy = self.JOY_NAME
+        else:
+            self.oem_name_of_searched_joy = joystick_oem_name
         self.dll = ctypes.windll.winmm
         self.joystick = Joystick()
 
@@ -189,9 +193,7 @@ class JoystickAPI:
 
         return oem_name
 
-    def get_joystick(self, name=None, verbose=False):
-        if name is None:
-            name = self.JOY_NAME
+    def get_joystick(self, verbose=False):
         for joy_num in range(0, self._get_number_of_devices()):
             return_code = self.dll.joyGetDevCapsW(joy_num,
                                                   ctypes.pointer(self.joystick.capabilities),
@@ -206,10 +208,10 @@ class JoystickAPI:
                     print(self.DRIVER_AND_OEM_NAME_STR.format(self.joystick.driver_name,
                                                               self.joystick.oem_name))
 
-                if self.joystick.oem_name == name:
+                if self.joystick.oem_name == self.oem_name_of_searched_joy:
                     return self.joystick
 
-        raise IOError(self.JS_NOT_FOUND_ERROR_STR.format(name))
+        raise IOError(self.JS_NOT_FOUND_ERROR_STR.format(self.oem_name_of_searched_joy))
 
     def poll_joystick(self, joystick, verbose=False):
         joystick_connected = self.dll.joyGetPosEx(joystick.number, ctypes.pointer(joystick.info)) == 0
