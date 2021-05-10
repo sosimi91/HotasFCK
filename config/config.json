@@ -122,6 +122,16 @@
         "type": "button",
         "joy_button": "BTN_10",
         "kbd_button": "v"
+      },
+      "aws_reset": {
+        "type": "button",
+        "joy_button": "BTN_02",
+        "kbd_button": "q"
+      },
+      "cab_lights": {
+        "type": "button",
+        "joy_button": "BTN_03",
+        "kbd_button": "l"
       }
     }
   }
