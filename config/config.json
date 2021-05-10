@@ -112,6 +112,16 @@
         "type": "button",
         "joy_button": "BTN_12",
         "kbd_button": "esc"
+      },
+      "wipers_decrease": {
+        "type": "button",
+        "joy_button": "BTN_09",
+        "kbd_button": "shift-v"
+      },
+      "wipers_increase": {
+        "type": "button",
+        "joy_button": "BTN_10",
+        "kbd_button": "v"
       }
     }
   }

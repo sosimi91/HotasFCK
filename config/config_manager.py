@@ -63,8 +63,14 @@ class Config:
                 if required_key in self.validate_buttons_on_pyautogui:
                     kbd_key = train_function_data[required_key]
 
-                    if not isValidKey(kbd_key):
-                        raise ValueError("This key is not accepted by the framework: {}.".format(kbd_key))
+                    if "-" in kbd_key:
+                        check_keys = kbd_key.split("-")
+                    else:
+                        check_keys = [kbd_key]
+
+                    for key in check_keys:
+                        if not isValidKey(key):
+                            raise ValueError("This key is not accepted by the framework: {}.".format(kbd_key))
 
     def _load_cfg(self):
         with open(self.config_file, "r") as cfg:

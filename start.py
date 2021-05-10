@@ -1,4 +1,5 @@
 import pyautogui
+import pydirectinput
 
 from argparse import ArgumentParser
 from os.path import join
@@ -37,10 +38,19 @@ class Joy2Train:
             if zone.min < axis_value < zone.max:
                 return zone.id
 
-    def press_key(self, key):
-        pyautogui.keyDown(key)
-        sleep(0.3)
-        pyautogui.keyUp(key)
+    @staticmethod
+    def press_key(key, wait=0.3):
+        key_combo = key.split("-")
+
+        for key in range(0, len(key_combo)):
+            print("pressing {}".format(key_combo[key]))
+            pydirectinput.keyDown(key_combo[key])
+
+        sleep(wait)
+
+        for key in reversed(range(0, len(key_combo))):
+            print("releasing {}".format(key_combo[key]))
+            pydirectinput.keyUp(key_combo[key])
 
     def _axis_zonal_to_keypress(self, previous_value, previous_zone, train_function_name, on_increase, on_decrease):
         axis_name = self.config.get_joy_axis_name_by_train_function_name(train_function_name)
@@ -77,13 +87,13 @@ class Joy2Train:
                 if not self.axis_state_collector[train_function_name]["less_than_neutral"]:
                     self.axis_state_collector[train_function_name]["less_than_neutral"] = True
                     print("---{}---".format(axis_name))
-                    self.press_key(on_low)
+                    self.press_key(on_low, wait=0.1)
 
             elif axis.value > neutral_value:
                 if not self.axis_state_collector[train_function_name]["more_than_neutral"]:
                     self.axis_state_collector[train_function_name]["more_than_neutral"] = True
                     print("+++{}+++".format(axis_name))
-                    self.press_key(on_high)
+                    self.press_key(on_high, wait=0.1)
 
             elif axis.value == neutral_value:
                 del self.axis_state_collector[train_function_name]

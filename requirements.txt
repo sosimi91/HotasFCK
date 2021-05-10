@@ -1,1 +1,2 @@
 PyAutoGUI~=0.9.52
+PyDirectInput~=1.0.4
