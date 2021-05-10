@@ -79,6 +79,10 @@ applied to which axis, etc. If you want to drive another train, you should chang
 
 ### Launch and use
 * Check your configs (see above)
-* Start with `python start.py [--config C:\path\to\config.json]` where you can add your own config file if you want 
-  (optional and experimental). Or use the default and don't give any parameters.
+* Start with `python start.py [--config C:\path\to\config.json] [--input-test]`
+    
+    Where:
+    - the `--config` parameter defines a custom config file (e.g. for your own joystick) (optional).
+    - the `--input-test` option sets the tool to only show your joystick's values (e.g. for creating custom configs)
+      (optional).
 * Launch the game and enjoy :)
