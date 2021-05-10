@@ -13,7 +13,7 @@ class Joy2Train:
     DEFAULT_CONFIG_FILE = join("config", "config.json")
     DEFAULT_NEUTRAL_VAL = 32767
 
-    def __init__(self, conf_file=None):
+    def __init__(self, conf_file=None, input_test=False):
         if cfg_file is None:
             self.config = Config(self.DEFAULT_CONFIG_FILE)
         else:
@@ -24,6 +24,8 @@ class Joy2Train:
 
         self.axis_state_collector = {}
         self.button_state_collector = {}
+
+        self.test_mode = input_test
 
     @staticmethod
     def _determine_zone(axis_value, zone_mapping):
@@ -138,33 +140,58 @@ class Joy2Train:
                                         on_high=train_function["on_high"],
                                         neutral_value=neutral_value)
 
+    @staticmethod
+    def _show_joystick_values(joystick_values):
+        axes = joystick_values["axes"]
+        buttons = joystick_values["buttons"]
+        pov = joystick_values["pov"]
+
+        for axis in axes:
+            if axis.changed:
+                print("Axis {}: {}".format(axis.name, axis.value))
+
+        for button in buttons:
+            if button.pressed:
+                print("Button {} is pressed.".format(button.name))
+
+        for pov_dir in pov:
+            if pov_dir.pressed:
+                print("Pov direction: {}".format(pov_dir.name))
+
     def main(self):
         while True:
-            self.api.poll_joystick(self.joystick)
+            joystick_values = self.api.poll_joystick(self.joystick)
 
-            for train_function_name in self.config.get_mapped_functions():
-                train_function = self.config.get_train_function(train_function_name)
+            if self.test_mode:
+                self._show_joystick_values(joystick_values)
 
-                if train_function["type"] == "zonal" and self.config.zone_map_exists(train_function_name):
-                    self._manage_zonal(train_function_name=train_function_name,
-                                       train_function=train_function)
+            else:
+                for train_function_name in self.config.get_mapped_functions():
+                    train_function = self.config.get_train_function(train_function_name)
 
-                elif train_function["type"] == "endpoint":
-                    self._manage_endpoint(train_function_name=train_function_name,
-                                          train_function=train_function)
+                    if train_function["type"] == "zonal" and self.config.zone_map_exists(train_function_name):
+                        self._manage_zonal(train_function_name=train_function_name,
+                                           train_function=train_function)
 
-                elif train_function["type"] == "button":
-                    self._button_to_keypress(button_name=train_function["joy_button"],
-                                             key_name=train_function["kbd_button"])
+                    elif train_function["type"] == "endpoint":
+                        self._manage_endpoint(train_function_name=train_function_name,
+                                              train_function=train_function)
+
+                    elif train_function["type"] == "button":
+                        self._button_to_keypress(button_name=train_function["joy_button"],
+                                                 key_name=train_function["kbd_button"])
 
 
 if __name__ == "__main__":
     ap = ArgumentParser()
     ap.add_argument("--config", required=False, help="Config file path and name.")
+    ap.add_argument("--input-test", required=False, action='store_true', help="Allows to check your joystick's values "
+                                                                              "for configuration.")
     args = ap.parse_args()
     if args.config:
         cfg_file = args.config
     else:
         cfg_file = None
-    J2T = Joy2Train(conf_file=cfg_file)
+    J2T = Joy2Train(conf_file=cfg_file, input_test=args.input_test)
+    print("Press Ctrl + c to quit.")
     J2T.main()
