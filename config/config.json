@@ -77,6 +77,110 @@
           }
         }
       }
+    },
+    "BR 442": {
+      "zones": {
+        "accelerator": {
+          "zone_01": {
+            "name": "100%",
+            "id": -3,
+            "min": 0,
+            "max": 12800
+          },
+          "zone_02": {
+            "name": "Middle",
+            "id": -2,
+            "min": 12800,
+            "max": 25600
+          },
+          "zone_03": {
+            "name": "Low",
+            "id": -1,
+            "min": 25600,
+            "max": 32765
+          },
+          "zone_04": {
+            "name": "0%",
+            "id": -0,
+            "min": 32765,
+            "max": 32770
+          },
+          "zone_05": {
+            "name": "Brake low",
+            "id": 1,
+            "min": 32770,
+            "max": 47200
+          },
+          "zone_06": {
+            "name": "Brake middle",
+            "id": 2,
+            "min": 47200,
+            "max": 60000
+          },
+          "zone_07": {
+            "name": "-100%",
+            "id": 3,
+            "min": 60000,
+            "max": 65530
+          },
+          "zone_08": {
+            "name": "Emergency",
+            "id": 4,
+            "min": 65530,
+            "max": 65536
+          }
+        },
+        "auto_brake": {
+          "zone_01": {
+            "name": "Release",
+            "id": 0,
+            "min": 0,
+            "max": 32770
+          },
+          "zone_02": {
+            "name": "Hold",
+            "id": 1,
+            "min": 32770,
+            "max": 38000
+          },
+          "zone_03": {
+            "name": "0%-20%",
+            "id": 2,
+            "min": 38000,
+            "max": 42000
+          },
+          "zone_04": {
+            "name": "20%-40%",
+            "id": 3,
+            "min": 42000,
+            "max": 48000
+          },
+          "zone_05": {
+            "name": "40%-60%",
+            "id": 4,
+            "min": 48000,
+            "max": 54000
+          },
+          "zone_06": {
+            "name": "60%-80%",
+            "id": 5,
+            "min": 54000,
+            "max": 60000
+          },
+          "zone_07": {
+            "name": "80%-100%",
+            "id": 6,
+            "min": 60000,
+            "max": 65530
+          },
+          "zone_08": {
+            "name": "Emergency",
+            "id": 7,
+            "min": 65530,
+            "max": 65536
+          }
+        }
+      }
     }
   },
   "selected_train": "1972 Stock",
