@@ -81,7 +81,6 @@
     "BR 442": {
       "zones": {
         "accelerator": {
-          "wait": 0.1,
           "zone_01": {
             "name": "100%",
             "id": -3,
