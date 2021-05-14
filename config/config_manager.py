@@ -5,11 +5,15 @@ from pyautogui import isValidKey
 
 
 class Zone:
-    def __init__(self, name, zone_id, min_value, max_value):
+    def __init__(self, name, zone_id, min_value, max_value, wait=None):
         self.name = name
         self.id = zone_id
         self.min = min_value
         self.max = max_value
+        if wait:
+            self.wait = wait
+        else:
+            self.wait = 0.3
 
 
 class Config:
@@ -95,12 +99,21 @@ class Config:
         zones_data = OrderedDict()
         selected_train = self.parsed["selected_train"]
         zones = self.parsed["trains"][selected_train]["zones"][train_function_name]
+        global_wait = None
         for zone_name in sorted(zones):
-            _zone = zones[zone_name]
-            zones_data[zone_name] = Zone(name=_zone["name"],
-                                         zone_id=_zone["id"],
-                                         min_value=_zone["min"],
-                                         max_value=_zone["max"])
+            if zone_name == "default_wait":
+                global_wait = zones[zone_name]
+            else:
+                _zone = zones[zone_name]
+                try:
+                    wait = _zone["wait"]
+                except KeyError:
+                    wait = global_wait if global_wait else None
+                zones_data[zone_name] = Zone(name=_zone["name"],
+                                             zone_id=_zone["id"],
+                                             min_value=_zone["min"],
+                                             max_value=_zone["max"],
+                                             wait=wait)
 
         return zones_data
 

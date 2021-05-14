@@ -38,10 +38,13 @@ class Joy2Train:
                 zone.max += 1
 
             if zone.min < axis_value < zone.max:
-                return zone.id
+                return zone.id, zone.wait
 
     @staticmethod
-    def press_key(key, wait=0.3):
+    def press_key(key, wait=None):
+        if not wait:
+            wait = 0.3
+
         key_combo = key.split("-")
 
         for key in range(0, len(key_combo)):
@@ -60,15 +63,15 @@ class Joy2Train:
         zone_mapping = self.config.get_zone_mapping(train_function_name=train_function_name)
         if axis.changed:
             current_value = axis.value
-            current_zone = self._determine_zone(current_value, zone_mapping)
+            current_zone, wait = self._determine_zone(current_value, zone_mapping)
             if (previous_value < current_value) and (previous_zone < current_zone):
                 print("---{}---".format(axis_name))
                 for press in range(0, (current_zone - previous_zone)):
-                    self.press_key(on_decrease)
+                    self.press_key(on_decrease, wait=wait)
             elif (previous_value > current_value) and (previous_zone > current_zone):
                 print("+++{}+++".format(axis_name))
                 for press in range(0, (previous_zone - current_zone)):
-                    self.press_key(on_increase)
+                    self.press_key(on_increase, wait=wait)
 
             previous_value = current_value
             previous_zone = current_zone
