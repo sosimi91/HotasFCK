@@ -84,51 +84,88 @@
           "default_wait": 0.125,
           "zone_01": {
             "name": "100%",
-            "id": -3,
+            "id": -6,
             "min": 0,
-            "max": 12800
+            "max": 5000
           },
           "zone_02": {
-            "name": "Middle",
-            "id": -2,
-            "min": 12800,
-            "max": 25600
+            "name": "80%",
+            "id": -5,
+            "min": 5000,
+            "max": 10000
           },
           "zone_03": {
-            "name": "Low",
-            "id": -1,
-            "min": 25600,
-            "max": 32765
+            "name": "60%",
+            "id": -4,
+            "min": 10000,
+            "max": 15000
           },
           "zone_04": {
+            "name": "40%",
+            "id": -3,
+            "min": 15000,
+            "max": 20000
+          },
+          "zone_05": {
+            "name": "20%",
+            "id": -2,
+            "min": 20000,
+            "max": 25000
+          },
+          "zone_06": {
+            "name": "5%",
+            "id": -1,
+            "min": 25000,
+            "max": 32765
+          },
+          "zone_07": {
             "name": "0%",
             "id": -0,
             "min": 32765,
             "max": 32770
           },
-          "zone_05": {
-            "name": "Brake low",
+          "zone_08": {
+            "name": "B5%",
             "id": 1,
             "min": 32770,
-            "max": 47200
+            "max": 37000
           },
-          "zone_06": {
-            "name": "Brake middle",
+          "zone_09": {
+            "name": "B20%",
             "id": 2,
-            "min": 47200,
-            "max": 60000
+            "min": 37000,
+            "max": 42000
           },
-          "zone_07": {
-            "name": "-100%",
+          "zone_10": {
+            "name": "B40%",
             "id": 3,
-            "min": 60000,
-            "max": 65530
+            "min": 42000,
+            "max": 47000
           },
-          "zone_08": {
-            "name": "Emergency",
+          "zone_11": {
+            "name": "B60%",
             "id": 4,
-            "min": 65530,
-            "max": 65536
+            "min": 47000,
+            "max": 52000
+          },
+          "zone_12": {
+            "name": "B80%",
+            "id": 5,
+            "min": 52000,
+            "max": 57000
+          },
+          "zone_13": {
+            "name": "B100%",
+            "id": 6,
+            "min": 57000,
+            "max": 65500
+          },
+          "zone_14": {
+            "name": "Emergency",
+            "id": 7,
+            "min": 65500,
+            "max": 65536,
+            "wait": 0.2
           }
         },
         "auto_brake": {
@@ -184,7 +221,7 @@
       }
     }
   },
-  "selected_train": "1972 Stock",
+  "selected_train": "BR 442",
   "joystick": {
     "name": "T.Flight Hotas X",
     "mapping": {
