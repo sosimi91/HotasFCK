@@ -4,9 +4,11 @@ import pydirectinput
 from argparse import ArgumentParser
 from os.path import join
 from time import sleep
+from threading import Thread
 
 from config.config_manager import Config
 from joystick_api.joystickapi import JoystickAPI
+from gui.GUI import GUI
 
 
 class Joy2Train:
@@ -19,13 +21,38 @@ class Joy2Train:
         else:
             self.config = Config(conf_file)
 
-        self.api = JoystickAPI(joystick_oem_name=self.config.get_joystick_name())
-        self.joystick = self.api.get_joystick()
+        self.api = JoystickAPI()
+        self.joystick = None
+
+        self.joysticks = {}
 
         self.axis_state_collector = {}
         self.button_state_collector = {}
 
         self.test_mode = input_test
+
+        self.GUI = GUI(joysticks=self._update_joysticks())
+
+        self.running = True
+
+        self.test_widgets_visible = False
+
+    def _update_joysticks(self):
+        joysticks_list = self.api.get_joysticks_list()
+        for joystick in joysticks_list:
+            if joystick.oem_name not in self.joysticks.keys():
+                self.joysticks[joystick.oem_name] = joystick
+
+        for joystick in self.joysticks:
+            joy_still_exists = False
+            for j2 in joysticks_list:
+                if j2.oem_name == joystick:
+                    joy_still_exists = True
+
+            if not joy_still_exists:
+                del self.joysticks[joystick]
+                break
+        return joysticks_list
 
     @staticmethod
     def _determine_zone(axis_value, zone_mapping):
@@ -143,46 +170,85 @@ class Joy2Train:
                                         on_high=train_function["on_high"],
                                         neutral_value=neutral_value)
 
-    @staticmethod
-    def _show_joystick_values(joystick_values):
+    def _show_joystick_values(self, joystick_values):
+        if not self.test_widgets_visible:
+            self.GUI.add_joystick_test(self.api.get_joysticks_list())
+            self.test_widgets_visible = True
         axes = joystick_values["axes"]
         buttons = joystick_values["buttons"]
         pov = joystick_values["pov"]
 
         for axis in axes:
             if axis.changed:
-                print("Axis {}: {}".format(axis.name, axis.value))
+                _str = "Axis {}: {}".format(axis.name, axis.value)
+                print(_str)
+                self.GUI.insert_text(self.GUI.info_text, _str)
 
         for button in buttons:
             if button.pressed:
-                print("Button {} is pressed.".format(button.name))
+                _str = "Button {} is pressed.".format(button.name)
+                print(_str)
+                self.GUI.insert_text(self.GUI.info_text, _str)
 
         for pov_dir in pov:
             if pov_dir.pressed:
-                print("Pov direction: {}".format(pov_dir.name))
+                _str = "Pov direction: {}".format(pov_dir.name)
+                print(_str)
+                self.GUI.insert_text(self.GUI.info_text, _str)
 
     def main(self):
-        while True:
-            joystick_values = self.api.poll_joystick(self.joystick)
+        joystick_count = 0
 
-            if self.test_mode:
-                self._show_joystick_values(joystick_values)
+        while self.running:
+            self._update_joysticks()
+            _joysticks = self.api.get_joysticks_list()
 
-            else:
-                for train_function_name in self.config.get_mapped_functions():
-                    train_function = self.config.get_train_function(train_function_name)
+            if not _joysticks:
+                if len(_joysticks) != joystick_count:
+                    self.GUI.add_connect_joystick()
+                    self.test_widgets_visible = False
+                    joystick_count = len(_joysticks)
+                sleep(0.25)
+                continue
 
-                    if train_function["type"] == "zonal" and self.config.zone_map_exists(train_function_name):
-                        self._manage_zonal(train_function_name=train_function_name,
-                                           train_function=train_function)
+            if len(_joysticks) != joystick_count:
+                self.GUI.add_joystick_selector(_joysticks)
+                self.test_widgets_visible = False
+                joystick_count = len(_joysticks)
 
-                    elif train_function["type"] == "endpoint":
-                        self._manage_endpoint(train_function_name=train_function_name,
-                                              train_function=train_function)
+            try:
+                self.joystick = [self.joysticks[joystick]
+                                 for joystick in self.joysticks
+                                 if self.joysticks[joystick].oem_name == self.GUI.joy_select_var.get()][0]
+            except AttributeError:
+                self.running = False
+                break
+            except IndexError:
+                continue
 
-                    elif train_function["type"] == "button":
-                        self._button_to_keypress(button_name=train_function["joy_button"],
-                                                 key_name=train_function["kbd_button"])
+            try:
+                joystick_values = self.api.poll_joystick(self.joystick)
+                if self.test_mode:
+                    self._show_joystick_values(joystick_values)
+
+                else:
+                    for train_function_name in self.config.get_mapped_functions():
+                        train_function = self.config.get_train_function(train_function_name)
+
+                        if train_function["type"] == "zonal" and self.config.zone_map_exists(train_function_name):
+                            self._manage_zonal(train_function_name=train_function_name,
+                                               train_function=train_function)
+
+                        elif train_function["type"] == "endpoint":
+                            self._manage_endpoint(train_function_name=train_function_name,
+                                                  train_function=train_function)
+
+                        elif train_function["type"] == "button":
+                            self._button_to_keypress(button_name=train_function["joy_button"],
+                                                     key_name=train_function["kbd_button"])
+            except IOError:
+                self.GUI.add_connect_joystick()
+                self.test_widgets_visible = False
 
 
 if __name__ == "__main__":
@@ -196,5 +262,10 @@ if __name__ == "__main__":
     else:
         cfg_file = None
     J2T = Joy2Train(conf_file=cfg_file, input_test=args.input_test)
-    print("Press Ctrl + c to quit.")
-    J2T.main()
+
+    backend_thread = Thread(target=J2T.main, name="backend_thread")
+    backend_thread.daemon = True
+    backend_thread.start()
+
+    J2T.GUI.run()
+    J2T.running = False

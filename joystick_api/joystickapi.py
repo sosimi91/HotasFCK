@@ -140,7 +140,6 @@ class Joystick:
 
 
 class JoystickAPI:
-    JOY_NAME = "T.Flight Hotas X"
     SUB_PREFIX = "System\\CurrentControlSet\\Control\\"
     HWID_SUB_KEY_STR = SUB_PREFIX + "MediaResources\\Joystick\\{}\\CurrentJoystickSettings"
     OEM_NAME_SUB_KEY_STR = SUB_PREFIX + "MediaProperties\\PrivateProperties\\Joystick\\OEM\\{}"
@@ -153,11 +152,7 @@ class JoystickAPI:
     JS_NOT_FOUND_ERROR_STR = "{} joystick not found"
     JS_DATA_STR = "Axes: {}; Buttons: {}; POV: {}"
 
-    def __init__(self, joystick_oem_name=None):
-        if joystick_oem_name is None:
-            self.oem_name_of_searched_joy = self.JOY_NAME
-        else:
-            self.oem_name_of_searched_joy = joystick_oem_name
+    def __init__(self):
         self.dll = ctypes.windll.winmm
         self.joystick = Joystick()
 
@@ -196,29 +191,30 @@ class JoystickAPI:
 
         return oem_name
 
-    def get_joystick(self, verbose=False):
+    def get_joysticks_list(self):
+        joysticks = []
         for joy_num in range(0, self._get_number_of_devices()):
+            joystick = Joystick()
+
             return_code = self.dll.joyGetDevCapsW(joy_num,
-                                                  ctypes.pointer(self.joystick.capabilities),
-                                                  ctypes.sizeof(self.joystick.capabilities))
+                                                  ctypes.pointer(joystick.capabilities),
+                                                  ctypes.sizeof(joystick.capabilities))
             if return_code == 0:
-                self.joystick.number = joy_num
-                self.joystick.driver_name = self.joystick.capabilities.szPname
+                joystick.number = joy_num
+                joystick.driver_name = self.joystick.capabilities.szPname
+                joystick.oem_name = self._get_oem_name(registry_key=joystick.capabilities.szRegKey,
+                                                       joystick_number=joy_num)
 
-                self.joystick.oem_name = self._get_oem_name()
+                if self.is_joystick_connected(joystick):
+                    joysticks.append(joystick)
 
-                if verbose:
-                    print(self.DRIVER_AND_OEM_NAME_STR.format(self.joystick.driver_name,
-                                                              self.joystick.oem_name))
+        return joysticks
 
-                if self.joystick.oem_name == self.oem_name_of_searched_joy:
-                    return self.joystick
-
-        raise IOError(self.JS_NOT_FOUND_ERROR_STR.format(self.oem_name_of_searched_joy))
+    def is_joystick_connected(self, joystick):
+        return self.dll.joyGetPosEx(joystick.number, ctypes.pointer(joystick.info)) == 0
 
     def poll_joystick(self, joystick, verbose=False):
-        joystick_connected = self.dll.joyGetPosEx(joystick.number, ctypes.pointer(joystick.info)) == 0
-        if joystick_connected:
+        if self.is_joystick_connected(joystick):
             axes = joystick.get_axes()
             buttons = joystick.get_pressed_buttons()
             pov = joystick.get_pov()
