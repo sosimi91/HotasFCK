@@ -223,7 +223,6 @@
   },
   "selected_train": "BR 442",
   "joystick": {
-    "name": "T.Flight Hotas X",
     "mapping": {
       "accelerator": {
         "axis": "JOY_Z",
