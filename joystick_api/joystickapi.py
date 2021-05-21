@@ -67,6 +67,9 @@ class Joystick:
                                mask_index=buttons - btn - 1)
                         for btn in range(0, buttons)]
 
+    def __repr__(self):
+        return self.oem_name
+
     def _get_item(self, what, where):
         for _item in where:
             if _item.name == what:
